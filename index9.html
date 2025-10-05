@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio | Ujjwal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('assets/bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #e0e0e0;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+    }
+
+    /* Ribbons Canvas */
+    #ribbons-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    /* Navbar */
+    nav {
+      position: fixed;
+      top: 20px; 
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      background: transparent;
+      display: flex; 
+      justify-content: center; 
+      gap: 1rem;
+      padding: 0;
+      z-index: 1000;
+    }
+    nav a {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    nav a:hover { 
+      color: #00c6ff;
+      background: rgba(0, 198, 255, 0.1);
+      border: 1px solid rgba(0, 198, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 198, 255, 0.3);
+    }
+
+    /* Scroll Blur Effect */
+    .scroll-blur {
+      transition: filter 0.3s ease;
+    }
+
+    /* Header */
+    header {
+      text-align:center;
+      padding: 6rem 1rem 3rem;
+    }
+    header h1 {
+      font-size: 3rem;
+      background: linear-gradient(90deg, #8e2de2, #4a00e0, #00c6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 15px rgba(0,0,0,0.8);
+    }
+
+    /* Sections */
+    section {
+      min-height: 80vh;
+      padding: 5rem 10%;
+    }
+    
+    section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: #ffb347;
+      text-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+    section p { max-width: 800px; line-height:1.8; }
+
+    /* Card style */
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-10px) rotateY(4deg);
+      box-shadow: 0 20px 35px rgba(0,0,0,0.6);
+    }
+
+    /* Highlighted cards in specific sections */
+    #education .card, #leadership .card {
+      border: 2px solid rgba(123, 104, 238, 0.3);
+      box-shadow: 
+        0 10px 25px rgba(0,0,0,0.4),
+        0 0 15px rgba(123, 104, 238, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    #education .card:hover, #leadership .card:hover {
+      border-color: rgba(123, 104, 238, 0.6);
+      box-shadow: 
+        0 20px 35px rgba(0,0,0,0.6),
+        0 0 25px rgba(123, 104, 238, 0.4);
+      transform: translateY(-10px) rotateY(4deg);
+    }
+
+    /* Skills grid */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap:1.5rem;
+    }
+    .skill {
+      flex:1 1 100px;
+      text-align:center;
+      padding:1rem;
+      background: rgba(255,255,255,0.05);
+      border-radius:12px;
+      border: 2px solid rgba(123, 104, 238, 0.3);
+      box-shadow: 0 0 10px rgba(123, 104, 238, 0.2);
+      transition: all 0.3s ease;
+    }
+    .skill:hover { 
+      transform: scale(1.1);
+      border-color: rgba(123, 104, 238, 0.6);
+      box-shadow: 0 0 20px rgba(123, 104, 238, 0.4);
+    }
+    .skill i { font-size:2rem; margin-bottom:0.5rem; display:block; }
+
+    /* Projects */
+/* Project hover - focus vs others */
+.projects-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  align-items: stretch;
+  position: relative; /* needed for overlay */
+  max-width: 1100px;  /* keeps them centered neatly */
+  margin: 0 auto;     /* centers the row */
+}
+
+.project-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  overflow: hidden;
+  width: 320px;
+  transition: transform 0.7s ease, box-shadow 0.7s ease, backdrop-filter 0.7s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  position: relative;
+  z-index: 1;
+}
+
+.project-card:hover {
+  transform: scale(1.15) translateY(-20px);
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 25px 50px rgba(0,255,229,0.4);
+  transition: transform 0.7s ease, box-shadow 0.7s ease, backdrop-filter 0.7s ease;
+}
+
+/* Dim + push other cards when one is hovered */
+.projects-container.dim .project-card:not(.active) {
+  transform: scale(0.85) translateY(20px);
+  filter: blur(3px) brightness(0.7);
+  opacity: 0.6;
+}
+
+/* Background overlay */
+.projects-container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+
+.projects-container.dim::before {
+  opacity: 1;
+}
+
+/* Project name styling */
+.project-content h3 {
+  margin: 0;
+  margin: 0 0 10px;     /* space below heading */
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #00ffe5, #00c6ff, #ff4ecd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(0,255,229,0.5);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  transform-origin: left center; /* anchor scaling to left */
+  overflow: hidden; /* prevent overflow */
+  white-space: nowrap; /* prevent text wrapping */
+  text-overflow: ellipsis; /* add ... if text is too long */
+  max-width: 100%; /* ensure it stays within container */
+  display: block; /* ensure proper block behavior */
+}
+
+.project-content h3:hover {
+  background: linear-gradient(90deg, #00ff7f, #00ffe5, #ff4ecd, #00c6ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 
+    0 0 25px rgba(0,255,127,0.9), 
+    0 0 35px rgba(0,255,229,0.7),
+    0 0 45px rgba(255,78,205,0.5);
+  transform: scale(1.03); /* reduced scale to stay in bounds */
+  letter-spacing: 1.5px; /* slight letter spacing increase */
+  filter: brightness(1.2); /* brighten the text */
+}
+
+/* Stylish Tech stack tags */
+.tech-stack {
+  margin-top: 8px; /* tighter spacing from description */
+}
+
+.tech-stack span {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(0,255,229,0.15), rgba(0,198,255,0.15));
+  padding: 4px 10px;       /* smaller padding */
+  border-radius: 16px;     /* softer pill shape */
+  margin: 3px 4px;         /* less spacing */
+  font-size: 0.75rem;      /* smaller text */
+  font-weight: 500;
+  color: #00ffe5;
+  border: 1px solid rgba(0,255,229,0.3);
+  box-shadow: 0 0 6px rgba(0,255,229,0.25);
+  transition: all 0.3s ease;
+}
+
+.tech-stack span:hover {
+  background: linear-gradient(135deg, #00ffe5, #00c6ff);
+  color: #0f0f0f;
+  box-shadow: 0 0 10px rgba(0,255,229,0.7);
+  transform: scale(1.05);
+}
+
+
+.project-content p {
+  font-size: 1rem;              /* increased text size */
+  line-height: 1.7;             /* better readability */
+  margin-bottom: 18px;          /* more spacing before tags */
+  padding: 16px 20px;           /* generous padding around text */
+  color: #e8e8e8;               /* brighter color for better contrast */
+  background: rgba(255, 255, 255, 0.03); /* subtle background */
+  border-radius: 12px;          /* rounded corners */
+  border-left: 3px solid rgba(0, 255, 127, 0.4); /* accent border */
+  backdrop-filter: blur(2px);   /* subtle blur effect */
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1); /* inner highlight */
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-content p:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-left-color: rgba(0, 255, 127, 0.6);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.project-content p::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    rgba(0, 255, 127, 0.05) 0%, 
+    transparent 50%, 
+    rgba(0, 255, 127, 0.02) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.project-content p:hover::before {
+  opacity: 1;
+}
+
+
+.project-card img {
+  width: 100%;
+  height: 180px;              /* smaller, cleaner size */
+  object-fit: cover;          /* keeps aspect ratio, fills box */
+  border-radius: 12px 12px 0 0; /* round top corners */
+  transition: transform 0.5s ease, filter 0.3s ease;
+  filter: brightness(0.3) contrast(0.6) blur(2px) !important;  /* dimmed with subtle blur by default */
+}
+
+.project-card:hover img {
+  transform: scale(1.05);     /* subtle zoom on hover */
+  filter: brightness(1) contrast(1) blur(0px) !important;  /* full brightness and clear on hover */
+}
+
+
+
+    /* Contact */
+    .contact-icons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .contact-icons a {
+      font-size: 2rem;
+      color: #fff;
+      transition: color 0.3s, transform 0.3s;
+    }
+    .contact-icons a:hover {
+      color: #00ffe5;
+      transform: scale(1.2);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      color: #b0b0b0;
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Ribbons Background Effect -->
+  <canvas id="ribbons-canvas"></canvas>
+  
+  <!-- Navbar -->
+  <nav>
+    <a href="#about">About</a>
+    <a href="#education">Education</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#leadership">Leadership</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <header>
+    <h1>Ujjwal Narayan Singh</h1>
+    <p>Computer Science Engineer • Full Stack Developer</p>
+  </header>
+
+  <section id="about">
+    <h2>About Me</h2>
+    <p>As a Computer Science engineering graduate, I have a strong foundation in data structures, algorithms, and full-stack development. I am experienced in building RESTful APIs with Node.js and Express, working with MySQL, and creating responsive UIs using HTML, CSS, JavaScript, and React.js.</p>
+  </section>
+
+  <section id="education">
+    <h2>Education</h2>
+    <div class="card">
+      <h3>Galgotias College Of Engineering and Technology</h3>
+      <p>B.Tech in Computer Science and Engineering (Nov 2022 - Jun 2026)<br>CGPA: 7.52 (till 6th sem)</p>
+    </div>
+    <div class="card">
+      <h3>Sant Atulanand Convent School</h3>
+      <p>Class 12th (2021) – 94.6%</p>
+    </div>
+  </section>
+
+  <section id="skills">
+    <h2>Technical Skills</h2>
+    <div class="skills-grid">
+      <div class="skill"><i class="fa-brands fa-js"></i>JavaScript</div>
+      <div class="skill"><i class="fa-solid fa-code"></i>C++</div>
+      <div class="skill"><i class="fa-solid fa-database"></i>SQL</div>
+      <div class="skill"><i class="fa-brands fa-node"></i>Node.js</div>
+      <div class="skill"><i class="fa-brands fa-react"></i>React.js</div>
+      <div class="skill"><i class="fa-solid fa-leaf"></i>MongoDB</div>
+      <div class="skill"><i class="fa-brands fa-aws"></i>AWS</div>
+      <div class="skill"><i class="fa-brands fa-git-alt"></i>Git</div>
+      <div class="skill"><i class="fa-brands fa-linux"></i>Linux</div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2>Projects</h2>
+    <div class="projects-container">
+      <div class="project-card">
+        <img src="assets/grocery.jpg"  onclick="window.open('https://green-cart-56o1.vercel.app/','_blank')">
+        <div class="project-content">
+          <h3 onclick="window.open('https://github.com/NSujjwal2003/GreenCart','_blank')">GreenCart</h3>
+          <p>Full-stack grocery shopping app with authentication, product listings, cart & checkout system.</p>
+          <div class="tech-stack">
+            <span>#Node.js</span><span>#Express</span><span>#React</span><span>#MongoDB</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <img src="assets/flightBooking.jpg" alt="AeroReserve project screenshot" onclick="alert('🚧 Frontend Under Development 🚧\n\nThe frontend for AeroReserve is currently under development and will be updated soon.\n\nNote: Backend code is already completed and available on GitHub!\n\nClick the title to view the backend repository.')">
+        <div class="project-content">
+          <h3 onclick="window.open('https://github.com/NSujjwal2003/AeroReserve','_blank')">AeroReserve</h3>
+          <p>Microservices flight booking system with secure payments & RabbitMQ messaging.</p>
+          <div class="tech-stack">
+            <span>#Node.js</span><span>#Express</span><span>#MySQL</span><span>#RabbitMQ</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <img src="assets/AI_SAAS.jpg" alt="QuickAI project screenshot" onclick="window.open('https://quick-ai-tau-pied.vercel.app/','_blank')">
+        <div class="project-content">
+          <h3 onclick="window.open('https://github.com/NSujjwal2003/QuickAI','_blank')">QuickAI</h3>
+          <p>AI-powered SaaS app with blog generators, image editing, and subscription billing.</p>
+          <div class="tech-stack">
+            <span>#PostgreSQL</span><span>#Express</span><span>#React</span><span>#Node.js</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section id="leadership">
+  <h2 class="section-title">Leadership</h2>
+  
+  <div class="card">
+    <h3>👨‍💻 Team Member: Extreme Club, GCET </h3>
+    <p>Organized and participated in club events fostering collaboration, innovation, and teamwork within the Extreme Club at GCET.</p>
+  </div>
+  
+  <div class="card">
+    <h3>🤝 Team Member: GDSC - GCET</h3>
+    <p>Contributed to Google Developer Student Club initiatives at GCET, collaborating on projects and events to promote tech learning and community growth.</p>
+  </div>
+</section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <h2>Contact Me</h2>
+    <div class="contact-icons">
+      <a href="mailto:uns.singh03@gmail.com"><i class="fas fa-envelope"></i></a>
+      <a href="https://github.com/NSujjwal2003" target="_blank"><i class="fab fa-github"></i></a>
+      <a href="https://www.linkedin.com/in/ujjwal-narayan-singh-0200a224b/" target="_blank"><i class="fab fa-linkedin"></i></a>
+      <a href="https://leetcode.com/u/zuck007/" target="_blank"><i class="fas fa-code"></i></a>
+      <a href="tel:+919415736043"><i class="fas fa-phone"></i></a>
+      <a href="https://x.com/ujjwalns007?t=tewbTeKaW4HPfTZQPHt1SQ&s=09" target="_blank"><i class="fab fa-x-twitter"></i></a>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 Ujjwal | Built with ❤️ using HTML, CSS, JS, GSAP
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script>
+    // Always scroll to top on page reload - force it immediately
+    if (history.scrollRestoration) {
+      history.scrollRestoration = 'manual';
+    }
+    
+    // Force scroll to top immediately when script loads
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
+    // Also force it when page is fully loaded
+    window.addEventListener('load', function() {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
+    
+    // Force it on DOM content loaded as well
+    document.addEventListener('DOMContentLoaded', function() {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
+
+    // Scroll Blur Effect - Blur zone from navbar to top of viewport
+    window.addEventListener('scroll', function() {
+      const navbar = document.querySelector('nav');
+      const navbarRect = navbar.getBoundingClientRect();
+      const navbarTop = navbarRect.top;
+      
+      // Define blur zone: from top of viewport (0) to bottom of navbar
+      const blurZoneTop = 0;
+      const blurZoneBottom = navbarRect.bottom;
+      
+      // Get all elements that could be blurred (text, icons, images, etc.)
+      const allElements = document.querySelectorAll('h1, h2, h3, p, span, a:not(nav a), i, img, .skill-icon, .contact-icons i, .project-title, .project-description, .skill, .tech-stack span');
+      
+      allElements.forEach(element => {
+        const elementRect = element.getBoundingClientRect();
+        const elementTop = elementRect.top;
+        const elementBottom = elementRect.bottom;
+        
+        // Check if element is in the blur zone (between top of viewport and bottom of navbar)
+        const isInBlurZone = !(elementBottom < blurZoneTop || elementTop > blurZoneBottom);
+        
+        if (isInBlurZone) {
+          let blurAmount = 4; // Full blur for everything in the zone
+          
+          // Only reduce blur for elements that are BELOW navbar and partially overlapping
+          if (elementTop >= navbarTop) {
+            // Element is in or below navbar area - calculate overlap
+            const overlapTop = Math.max(elementTop, navbarTop);
+            const overlapBottom = Math.min(elementBottom, blurZoneBottom);
+            const overlapHeight = overlapBottom - overlapTop;
+            const elementHeight = elementBottom - elementTop;
+            const overlapRatio = Math.min(overlapHeight / elementHeight, 1);
+            blurAmount = overlapRatio * 4; // Proportional blur only for elements coming from below
+          }
+          // Everything above navbar (elementBottom <= navbarTop) gets full 4px blur
+          
+          element.style.filter = `blur(${blurAmount}px)`;
+          element.style.transition = 'filter 0.1s ease';
+        } else {
+          element.style.filter = 'none';
+        }
+      });
+    });
+
+    // Header animation
+    gsap.from("header h1", { y:-50, opacity:0, duration:1 });
+    gsap.from("header p", { y:20, opacity:0, duration:1, delay:0.3 });
+
+    // Section reveal
+    gsap.utils.toArray("section h2").forEach(h2 => {
+      gsap.from(h2, {
+        scrollTrigger: { trigger:h2, start:"top 80%" },
+        y:40, opacity:0, duration:1
+      });
+    });
+    gsap.utils.toArray(".card, .project-card").forEach(el => {
+      gsap.from(el, {
+        scrollTrigger: { trigger:el, start:"top 90%" },
+        y:50, opacity:0, duration:1
+      });
+    });
+const container = document.querySelector('.projects-container');
+const cards = document.querySelectorAll('.project-card');
+
+cards.forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    container.classList.add('dim');
+    card.classList.add('active');
+  });
+  card.addEventListener('mouseleave', () => {
+    container.classList.remove('dim');
+    card.classList.remove('active');
+    card.style.transform = "perspective(1000px) scale(1) rotateX(0) rotateY(0)";
+  });
+
+  // Tilt effect
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * 10; // max 10deg tilt
+    const rotateY = ((x - centerX) / centerX) * 10;
+
+    card.style.transform = `perspective(1000px) scale(1.15) rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+});
+
+// Ribbons Effect
+class RibbonsEffect {
+  constructor(canvas, options = {}) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.mouse = { x: 0, y: 0 };
+    this.ribbons = [];
+    
+    this.config = {
+      colors: options.colors || ['#ffffff', '#00c6ff', '#8e2de2'],
+      baseThickness: options.baseThickness || 30,
+      speedMultiplier: options.speedMultiplier || 0.5,
+      maxAge: options.maxAge || 500,
+      pointCount: options.pointCount || 50,
+      spring: options.spring || 0.03,
+      friction: options.friction || 0.9,
+      offsetFactor: options.offsetFactor || 0.05,
+      enableFade: options.enableFade !== false,
+      enableWaves: options.enableWaves !== false,
+      waveAmplitude: options.waveAmplitude || 15,
+      waveFrequency: options.waveFrequency || 0.02
+    };
+    
+    this.time = 0;
+    
+    this.init();
+  }
+  
+  init() {
+    this.resize();
+    this.createRibbons();
+    this.bindEvents();
+    this.animate();
+  }
+  
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  }
+  
+  createRibbons() {
+    const center = (this.config.colors.length - 1) / 2;
+    
+    this.config.colors.forEach((color, index) => {
+      const ribbon = {
+        color: color,
+        points: [],
+        velocity: { x: 0, y: 0 },
+        spring: this.config.spring + (Math.random() - 0.5) * 0.01,
+        friction: this.config.friction + (Math.random() - 0.5) * 0.02,
+        thickness: this.config.baseThickness + (Math.random() - 0.5) * 5,
+        offset: {
+          x: (index - center) * this.config.offsetFactor * window.innerWidth + (Math.random() - 0.5) * 20,
+          y: (Math.random() - 0.5) * 50
+        }
+      };
+      
+      // Initialize points
+      for (let i = 0; i < this.config.pointCount; i++) {
+        ribbon.points.push({
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+          age: 0
+        });
+      }
+      
+      this.ribbons.push(ribbon);
+    });
+  }
+  
+  bindEvents() {
+    const updateMouse = (e) => {
+      this.mouse.x = e.clientX;
+      this.mouse.y = e.clientY;
+    };
+    
+    window.addEventListener('mousemove', updateMouse);
+    window.addEventListener('resize', () => this.resize());
+    
+    // Touch events
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        this.mouse.x = e.touches[0].clientX;
+        this.mouse.y = e.touches[0].clientY;
+      }
+    });
+  }
+  
+  update() {
+    this.time += 0.016; // Increment time for wave animation
+    
+    this.ribbons.forEach(ribbon => {
+      // Update first point to follow mouse with offset
+      const targetX = this.mouse.x + ribbon.offset.x;
+      const targetY = this.mouse.y + ribbon.offset.y;
+      
+      const dx = targetX - ribbon.points[0].x;
+      const dy = targetY - ribbon.points[0].y;
+      
+      ribbon.velocity.x += dx * ribbon.spring;
+      ribbon.velocity.y += dy * ribbon.spring;
+      
+      ribbon.velocity.x *= ribbon.friction;
+      ribbon.velocity.y *= ribbon.friction;
+      
+      ribbon.points[0].x += ribbon.velocity.x;
+      ribbon.points[0].y += ribbon.velocity.y;
+      
+      // Update following points
+      for (let i = 1; i < ribbon.points.length; i++) {
+        const point = ribbon.points[i];
+        const prevPoint = ribbon.points[i - 1];
+        
+        const segmentDelay = this.config.maxAge / (ribbon.points.length - 1);
+        const alpha = Math.min(1, (16 * this.config.speedMultiplier) / segmentDelay); // Assuming 60fps
+        
+        point.x += (prevPoint.x - point.x) * alpha;
+        point.y += (prevPoint.y - point.y) * alpha;
+        
+        // Add wave effect
+        if (this.config.enableWaves) {
+          const waveOffset = Math.sin(this.time * 2 + i * this.config.waveFrequency) * this.config.waveAmplitude;
+          point.waveX = point.x + waveOffset * Math.cos(this.time + i * 0.1);
+          point.waveY = point.y + waveOffset * Math.sin(this.time + i * 0.1);
+        } else {
+          point.waveX = point.x;
+          point.waveY = point.y;
+        }
+        
+        point.age += 16; // Increment age
+      }
+    });
+  }
+  
+  draw() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    this.ribbons.forEach(ribbon => {
+      this.ctx.strokeStyle = ribbon.color;
+      this.ctx.lineWidth = ribbon.thickness;
+      this.ctx.lineCap = 'round';
+      this.ctx.lineJoin = 'round';
+      
+      // Create gradient path
+      for (let i = 0; i < ribbon.points.length - 1; i++) {
+        const point = ribbon.points[i];
+        const nextPoint = ribbon.points[i + 1];
+        
+        // Use wave positions if available, otherwise regular positions
+        const currentX = point.waveX !== undefined ? point.waveX : point.x;
+        const currentY = point.waveY !== undefined ? point.waveY : point.y;
+        const nextX = nextPoint.waveX !== undefined ? nextPoint.waveX : nextPoint.x;
+        const nextY = nextPoint.waveY !== undefined ? nextPoint.waveY : nextPoint.y;
+        
+        if (this.config.enableFade) {
+          const opacity = 1 - (i / ribbon.points.length);
+          this.ctx.globalAlpha = opacity * 0.8; // Increased base opacity
+        } else {
+          this.ctx.globalAlpha = 0.8;
+        }
+        
+        const thickness = ribbon.thickness * (1 - (i / ribbon.points.length) * 0.5);
+        this.ctx.lineWidth = Math.max(1, thickness);
+        
+        this.ctx.beginPath();
+        this.ctx.moveTo(currentX, currentY);
+        this.ctx.lineTo(nextX, nextY);
+        this.ctx.stroke();
+      }
+    });
+    
+    this.ctx.globalAlpha = 1;
+  }
+  
+  animate() {
+    this.update();
+    this.draw();
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
+// Initialize Ribbons Effect
+window.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('ribbons-canvas');
+  if (canvas) {
+    new RibbonsEffect(canvas, {
+      colors: ['#00FF7F'],
+      baseThickness: 25,
+      speedMultiplier: 0.4,
+      maxAge: 600,
+      pointCount: 40,
+      enableFade: true,
+      enableWaves: true,
+      waveAmplitude: 12,
+      waveFrequency: 0.03
+    });
+  }
+});
+
+  </script>
+</body>
+</html>
